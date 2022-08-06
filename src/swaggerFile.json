@@ -1,0 +1,297 @@
+{
+  "openapi": "3.0.0.",
+  "info": {
+    "title": "Solid start documentation",
+    "description": "Users registration api with solid principles",
+    "version": "1.0.0",
+    "contact": {
+      "email": "userregistration@usersregistration.com"
+    }
+  },
+  "paths": {
+    "/users": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Register a user",
+        "description": "Register a new user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "name": "User name example",
+                  "email": "newuser@userregistration.com"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/user"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "enum": [
+                        "user already exists"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "List users",
+        "description": "List all users, only admin user can access",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "required": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/usersList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/errors/userNotFound"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get user profile",
+        "description": "get user profile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "required": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/user"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/errors/userNotFound"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}/admin": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Turn admin user",
+        "description": "Turn admin user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "required": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/adminUser"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/errors/userNotFound"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "user": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "admin": {
+          "type": "boolean"
+        },
+        "email": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "id": "a5a21d7a-0f8e-4fef-b29d-93b75932892a",
+        "name": "User 1 name example",
+        "admin": false,
+        "email": "newuser1@userregistration.com",
+        "created_at": "2022-08-02T16:58:43.765Z",
+        "updated_at": "2022-08-06T16:58:43.765Z"
+      }
+    },
+    "adminUser": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "admin": {
+          "type": "boolean"
+        },
+        "email": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "id": "a5a21d7a-0f8e-4fef-b29d-93b75932892a",
+        "name": "User 1 name example",
+        "admin": true,
+        "email": "newuser1@userregistration.com",
+        "created_at": "2022-08-02T16:58:43.765Z",
+        "updated_at": "2022-08-06T16:58:43.765Z"
+      }
+    },
+    "usersList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/user"
+      },
+      "example": [
+        {
+          "id": "a5a21d7a-0f8e-4fef-b29d-93b75932892a",
+          "name": "User 1 name example",
+          "admin": false,
+          "email": "newuser1@userregistration.com",
+          "created_at": "2022-08-02T16:58:43.765Z",
+          "updated_at": "2022-08-06T16:58:43.765Z"
+        },
+        {
+          "id": "a5a21d7a-0f8e-4fef-b29d-93b75932892b",
+          "name": "User 2  name example",
+          "admin": false,
+          "email": "newuser2@userregistration.com",
+          "created_at": "2022-08-03T16:58:43.765Z",
+          "updated_at": "2022-08-06T16:58:43.765Z"
+        }
+      ]
+    },
+    "errors": {
+      "userNotFound": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "enum": [
+              "user not found"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
